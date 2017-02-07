@@ -3,7 +3,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="IBStest.MainWindow"
         Title="Главное окно тестового задания" Height="347.915" Width="404.167" MinWidth="400" MinHeight="320" Icon="ibs_logo_2.ico">
-
+    <Window.Resources>
+        <ControlTemplate x:Key="validationFailed">
+            <StackPanel Orientation="Horizontal">
+                <Border BorderBrush="Violet" BorderThickness="2">
+                    <AdornedElementPlaceholder />
+                </Border>
+                <TextBlock Foreground="Red" FontSize="26" FontWeight="Bold">!</TextBlock>
+            </StackPanel>
+        </ControlTemplate>
+        <Style TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip"
+                        Value="{Binding RelativeSource={RelativeSource Self},
+                            Path=(Validation.Errors)[0].ErrorContent}" />
+                    <Setter Property="Foreground" Value="Red" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
     <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
@@ -29,16 +49,26 @@
             <StackPanel Grid.Column="1">
                 <StackPanel>
                     <Label Content="Страна" Margin="15,0,0,0"/>
-                    <ComboBox Height="23" Margin="10,0">
+                    <ComboBox x:Name="CbCountry" Height="23" Margin="10,0" SelectionChanged="CbCountry_SelectionChanged">
                         <Label Content="РФ" />
                         <Label Content="Зимбабве" />
                         <Label Content="иное" />
                     </ComboBox>
                 </StackPanel>
-                <StackPanel>
-                    <Label Content="ICQ" Margin="15,0,0,0"/>
-                    <TextBox Height="23" TextWrapping="Wrap" Margin="10,0"/>
-                </StackPanel>
+                <Grid x:Name="gIcq" IsEnabled="False" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label x:Name="Licq" Content="ICQ" Margin="15,0,0,0"/>
+                    <TextBox Grid.Row="1" x:Name="TbIcq" Height="23" TextWrapping="Wrap" Margin="10,0" Validation.ErrorTemplate="{StaticResource validationFailed}" Validation.Error="TextBox_Error">
+                        <Binding Path="Icq" NotifyOnValidationError="True">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox>
+                </Grid>
             </StackPanel>
         </Grid>
         <StackPanel Grid.Row="1">

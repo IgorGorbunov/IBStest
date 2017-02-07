@@ -20,9 +20,39 @@ namespace IBStest
     /// </summary>
     public partial class MainWindow : Window
     {
+        PersonModel person;
+
         public MainWindow()
         {
             InitializeComponent();
+            person = new PersonModel();
+            DataContext = person;
         }
+
+        private void CbCountry_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Label lCountry = (Label)CbCountry.SelectedItem;
+            if (lCountry.Content.ToString() == "Зимбабве")
+            {
+                gIcq.IsEnabled = true;
+            }
+            else
+            {
+                TbIcq.Clear();
+                Validation.ClearInvalid(TbIcq.GetBindingExpression(TextBox.TextProperty));
+                gIcq.IsEnabled = false;
+            }
+        }
+
+        private void TextBox_Error(object sender, ValidationErrorEventArgs e)
+        {
+            string error;
+            if (!PersonModel.IsCorrectIcq(((TextBox)sender).Text, out error))
+            {
+                MessageBox.Show(error);
+            }
+        }
+
+        
     }
 }
