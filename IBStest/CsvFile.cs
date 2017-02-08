@@ -19,7 +19,7 @@ namespace IBStest
 
         private void CreateFile(string fileName, PersonModel person)
         {
-            using (StreamWriter writer = new StreamWriter(fileName, false, Encoding.Unicode))
+            using (StreamWriter writer = new StreamWriter(fileName, false, Encoding.UTF8))
             {
                 writer.Write(GetRightString(person.Surname));
                 writer.Write(delimetr);
@@ -30,12 +30,23 @@ namespace IBStest
                 writer.Write(GetRightString(person.Icq));
                 writer.Write(delimetr);
 
+                foreach (FavoriteDish dish in person.Dishes)
+                {
+                    writer.Write(GetRightString(dish.Name));
+                    writer.Write(delimetr);
+                }
+
                 writer.Close();
             }
         }
 
         private string GetRightString(string value)
         {
+            if (string.IsNullOrEmpty(value))
+            {
+                return string.Empty;
+            }
+
             string newValue = string.Empty;
             foreach (char c in value)
             {
