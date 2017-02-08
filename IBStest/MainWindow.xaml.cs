@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -15,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace IBStest
 {
@@ -23,13 +25,14 @@ namespace IBStest
     /// </summary>
     public partial class MainWindow : Window
     {
-        PersonModel person;
+        private PersonModel _person;
+        private bool _icqInvalid;
 
         public MainWindow()
         {
             InitializeComponent();
-            person = new PersonModel();
-            DataContext = person;
+            _person = new PersonModel();
+            DataContext = _person;
             List<FavoriteDish> list = new List<FavoriteDish>();
             dgDishes.ItemsSource = list;
         }
@@ -46,14 +49,17 @@ namespace IBStest
                 TbIcq.Clear();
                 Validation.ClearInvalid(TbIcq.GetBindingExpression(TextBox.TextProperty));
                 gIcq.IsEnabled = false;
+                _icqInvalid = false;
             }
         }
 
         private void TextBox_Error(object sender, ValidationErrorEventArgs e)
         {
             string error;
+            _icqInvalid = false;
             if (!PersonModel.IsCorrectIcq(((TextBox)sender).Text, out error))
             {
+                _icqInvalid = true;
                 MessageBox.Show(error);
             }
         }
@@ -105,6 +111,53 @@ namespace IBStest
 
             return null;
         }
+
+        private void bSave_Click(object sender, RoutedEventArgs e)
+        {
+            if (_icqInvalid)
+            {
+                MessageBox.Show("Введите правильный ICQ номер!");
+                return;
+            }
+            _person.Icq = TbIcq.Text;
+            if (CbCountry.SelectedItem != null && 
+                !string.IsNullOrEmpty(CbCountry.SelectedItem.ToString()))
+            {
+                Label l = (Label) CbCountry.SelectedItem;
+                _person.Country = l.Content.ToString();
+            }
+            
+            List<FavoriteDish> dishes = new List <FavoriteDish>();
+            foreach (object rowDish in dgDishes.Items)
+            {
+                FavoriteDish dish;
+                try
+                {
+                    dish = (FavoriteDish)rowDish;
+                }
+                catch (InvalidCastException)
+                {
+                    break;
+                }
+                dishes.Add(dish);
+            }
+            _person.Dishes = dishes;
+            
+
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.FileName = "data";
+            dialog.DefaultExt = ".csv";
+            dialog.Filter = "CSV файлы (.csv)|*.csv";
+
+            bool? result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                string filename = dialog.FileName;
+                CsvFile csvFile = new CsvFile(filename, _person);
+            }
+        }
+
 
 
     }

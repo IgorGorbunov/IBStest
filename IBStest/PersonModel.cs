@@ -14,6 +14,8 @@ namespace IBStest
         public string Country { get; set; }
         public string Icq { get; set; }
 
+        public List<FavoriteDish> Dishes { get; set; }
+
         public static bool IsCorrectIcq(string icqVal, out string error)
         {
             error = "Номер ICQ должен быть больше 0 и состоять максимум из 9ти знаков";

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IBStest
 {
-    class FavoriteDish
+    public class FavoriteDish
     {
         [DisplayName("Наименование")]
         public string Name { get; set; }
