@@ -31,15 +31,25 @@ namespace IBStest
         public MainWindow()
         {
             InitializeComponent();
+            Init();
+        }
+
+        private void Init()
+        {
             _person = new PersonModel();
             DataContext = _person;
             List<FavoriteDish> list = new List<FavoriteDish>();
             dgDishes.ItemsSource = list;
+            CbCountry.SelectedIndex = -1;
         }
 
         private void CbCountry_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Label lCountry = (Label)CbCountry.SelectedItem;
+            if (lCountry == null)
+            {
+                return;
+            }
             if (lCountry.Content.ToString() == "Зимбабве")
             {
                 gIcq.IsEnabled = true;
@@ -155,6 +165,39 @@ namespace IBStest
             {
                 string filename = dialog.FileName;
                 CsvFile csvFile = new CsvFile(filename, _person);
+
+                Init();
+                MessageBox.Show("Запись сохранена!");
+            }
+        }
+
+        private void bLoad_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "CSV файлы (.csv)|*.csv";
+
+            bool? result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                string filename = dialog.FileName;
+                CsvFile csvFile = new CsvFile(filename);
+                PersonModel newPerson = csvFile.GetPerson();
+                DataContext = newPerson;
+                List<FavoriteDish> list = newPerson.Dishes;
+                dgDishes.ItemsSource = list;
+                for (int i = 0; i < CbCountry.Items.Count; i++)
+                {
+                    Label lCountry = (Label)CbCountry.Items[i];
+                    if (lCountry == null)
+                    {
+                        continue;
+                    }
+                    if (lCountry.Content.ToString() == newPerson.Country)
+                    {
+                        CbCountry.SelectedIndex = i;
+                    }
+                }
             }
         }
 

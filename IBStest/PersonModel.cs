@@ -16,6 +16,20 @@ namespace IBStest
 
         public List<FavoriteDish> Dishes { get; set; }
 
+        public PersonModel()
+        {
+            
+        }
+
+        public PersonModel(string surname, string name, string country, string icq, List<FavoriteDish> dishes)
+        {
+            Surname = surname;
+            Name = name;
+            Country = country;
+            Icq = icq;
+            Dishes = dishes;
+        }
+
         public static bool IsCorrectIcq(string icqVal, out string error)
         {
             error = "Номер ICQ должен быть больше 0 и состоять максимум из 9ти знаков";

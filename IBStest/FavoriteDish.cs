@@ -11,5 +11,15 @@ namespace IBStest
     {
         [DisplayName("Наименование")]
         public string Name { get; set; }
+
+        public FavoriteDish()
+        {
+            
+        }
+
+        public FavoriteDish(string name)
+        {
+            Name = name;
+        }
     }
 }
