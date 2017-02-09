@@ -28,6 +28,8 @@ namespace IBStest
         private PersonModel _person;
         private bool _icqInvalid;
 
+        private string _site = @"https://translate.google.com/#en/uk/";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -85,13 +87,17 @@ namespace IBStest
 
         }
 
+        /// <summary>
+        /// Метод для отображения наименования столбца
+        /// </summary>
+        /// <param name="descriptor">Дескриптор</param>
+        /// <returns></returns>
         public static string GetPropertyDisplayName(object descriptor)
         {
             var pd = descriptor as PropertyDescriptor;
 
             if (pd != null)
             {
-                // Check for DisplayName attribute and set the column header accordingly
                 var displayName = pd.Attributes[typeof(DisplayNameAttribute)] as DisplayNameAttribute;
 
                 if (displayName != null && displayName != DisplayNameAttribute.Default)
@@ -106,7 +112,6 @@ namespace IBStest
 
                 if (pi != null)
                 {
-                    // Check for DisplayName attribute and set the column header accordingly
                     Object[] attributes = pi.GetCustomAttributes(typeof(DisplayNameAttribute), true);
                     for (int i = 0; i < attributes.Length; ++i)
                     {
@@ -182,9 +187,9 @@ namespace IBStest
             {
                 string filename = dialog.FileName;
                 CsvFile csvFile = new CsvFile(filename);
-                PersonModel newPerson = csvFile.GetPerson();
-                DataContext = newPerson;
-                List<FavoriteDish> list = newPerson.Dishes;
+                _person = csvFile.GetPerson();
+                DataContext = _person;
+                List<FavoriteDish> list = _person.Dishes;
                 dgDishes.ItemsSource = list;
                 for (int i = 0; i < CbCountry.Items.Count; i++)
                 {
@@ -193,12 +198,18 @@ namespace IBStest
                     {
                         continue;
                     }
-                    if (lCountry.Content.ToString() == newPerson.Country)
+                    if (lCountry.Content.ToString() == _person.Country)
                     {
                         CbCountry.SelectedIndex = i;
                     }
                 }
             }
+        }
+
+        private void bBrowse_Click(object sender, RoutedEventArgs e)
+        {
+
+            System.Diagnostics.Process.Start(_site + _person.GetAllParametrs());
         }
 
 

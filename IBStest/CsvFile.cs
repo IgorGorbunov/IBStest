@@ -7,23 +7,39 @@ using System.Threading.Tasks;
 
 namespace IBStest
 {
-    class CsvFile
+    /// <summary>
+    /// Класс для обработки CSV файлов
+    /// </summary>
+    public class CsvFile
     {
         private char delimetr = ';';
         private char quotes = '"';
 
         private string _fileName;
 
+        /// <summary>
+        /// Конструктор создания нового csv файла
+        /// </summary>
+        /// <param name="fileName">Путь к файлу</param>
+        /// <param name="person">Личность</param>
         public CsvFile(string fileName, PersonModel person)
         {
             CreateFile(fileName, person);
         }
 
+        /// <summary>
+        /// Конструктор открытия существующего csv файла
+        /// </summary>
+        /// <param name="fileName">Путь к файлу</param>
         public CsvFile(string fileName)
         {
             _fileName = fileName;
         }
 
+        /// <summary>
+        /// Метод получения данных личности
+        /// </summary>
+        /// <returns></returns>
         public PersonModel GetPerson()
         {
             List <string> dataList = GetDataList(_fileName);
